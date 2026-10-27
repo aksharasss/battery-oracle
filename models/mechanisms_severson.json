@@ -1,0 +1,31 @@
+{
+  "n_curves": 2100,
+  "n_cells": 100,
+  "features": [
+    "r_p1_height",
+    "r_p1_area",
+    "r_p1_fwhm",
+    "d_p1_asym",
+    "n_p1_shift",
+    "u-1.5_band",
+    "u-1.0_band",
+    "u-0.5_band",
+    "u+0.0_band",
+    "u+0.5_band",
+    "u+1.0_band"
+  ],
+  "grouped_cv_by_cell": {
+    "LLI": {
+      "r2": 0.619,
+      "mae": 0.0295
+    },
+    "LAM_PE": {
+      "r2": 0.704,
+      "mae": 0.0373
+    },
+    "LAM_NE": {
+      "r2": 0.542,
+      "mae": 0.0364
+    }
+  }
+}
