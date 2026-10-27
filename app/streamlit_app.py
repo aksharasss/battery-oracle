@@ -37,12 +37,16 @@ def _pick_predict():
 
 predict, USING_STUB = _pick_predict()
 
-# Real Severson cells from the pipeline first, then the synthetic slow-rate
-# files (their peaks sit outside the 4C model's range, which the app flags).
+# Real cells from the pipeline first (Severson 4C, then Wheeler C/25, which
+# takes the slower twin-fit path), then the app's own synthetic files.
 SAMPLES = {}
 for f in sorted((ROOT / "data" / "samples").glob("severson_*.csv")):
     _, cell, cycle = f.stem.split("_", 2)
-    SAMPLES[f"Severson cell {cell[1:]}, cycle {cycle.removeprefix('cycle')}"] = f
+    SAMPLES[f"Severson cell {cell[1:]}, cycle {cycle.removeprefix('cycle')} (4C)"] = f
+for f in sorted((ROOT / "data" / "samples").glob("wheeler_*.csv"),
+                key=lambda f: int(f.stem.split("_")[2].removeprefix("cycle"))):
+    _, cell, cycle, _rate = f.stem.split("_", 3)
+    SAMPLES[f"Wheeler cell {cell}, cycle {cycle.removeprefix('cycle')} (C/25)"] = f
 SAMPLES.update({
     "Synthetic slow-rate: mild lithium loss": APP_DIR / "samples" / "mild_lli.csv",
     "Synthetic slow-rate: cathode material loss": APP_DIR / "samples" / "lam_pe.csv",
@@ -97,7 +101,9 @@ with st.sidebar:
     sample = st.selectbox("…or try a sample", ["(none)", *SAMPLES], index=0 if upload else 1)
     with st.expander("File format"):
         st.markdown(
-            "One row per sample, in time order, covering roughly **3.45 V down to 3.0 V**.\n\n"
+            "One row per sample, in time order, covering roughly **3.45 V down to 2.9 V**. "
+            "A slow (about C/25) discharge is graded by fitting the half-cell model directly, "
+            "which takes up to a minute; a fast (4C) one uses the feature model and is instant.\n\n"
             "Columns are matched by name: `voltage`, and `capacity`/`Ah`, "
             "or `current` + `time` (seconds)."
         )
@@ -126,7 +132,8 @@ def _model_mtime() -> float:
 
 data = upload.getvalue() if upload is not None else Path(source).read_bytes()
 try:
-    with st.spinner("Computing dQ/dV and grading…"):
+    with st.spinner("Computing dQ/dV and grading… a slow-rate (C/25) file runs the full "
+                    "half-cell fit and can take up to a minute."):
         res = run(data, USING_STUB, _model_mtime())
 except ValueError as e:
     st.error(f"Couldn't grade **{name}**: {e}")
@@ -149,6 +156,13 @@ with left:
     c1.metric("Confidence", f"{res.confidence:.0%}")
     dominant = "None" if res.dominant == "none" else res.dominant.replace("_", " ")
     c2.metric("Dominant mechanism", dominant)
+    path = res.features.get("path")
+    if path == "slow":
+        rms = res.features.get("fit_rms")
+        st.caption("Method: half-cell twin fitted to this discharge (slow-rate path)"
+                   + (f", fit RMS {rms:.3f}" if rms is not None and np.isfinite(rms) else ""))
+    elif path == "fast":
+        st.caption("Method: 4C feature model calibrated on synthetic cells (fast path)")
     # Notes about the mechanism split sit under the bars they qualify;
     # out-of-range input is an error, everything else a warning.
     mech_notes = [n for n in res.notes if n.startswith(("Mechanism split", "Outside the synthetic"))]
@@ -163,7 +177,12 @@ with left:
     for note in res.notes:
         if note in mech_notes:
             continue
-        (st.error if note.startswith("Out of range") else st.warning)(note)
+        if note.startswith("Out of range"):
+            st.error(note)
+        elif note.startswith("Slow-rate path"):
+            st.info(note)
+        else:
+            st.warning(note)
 
 with right:
     st.markdown("**Mechanism breakdown**  \nEstimated loss against a fresh cell, by mechanism.")
