@@ -175,3 +175,28 @@ shows up at the end of life.
    20% of the total loss is B, not C, because neither mode drives lithium
    plating. Mixed modes that involve graphite stay C.
 3. Severson 4C stays limited by the peak merge (see above).
+
+## Update 2026-10-27: recalibration and two-path predict()
+
+- **4C recalibration** on the refitted synthetic model, which adds the
+  start-of-discharge relaxation, in-discharge resistance growth (r_diff) and
+  spread growth (het) as nuisance terms. Grouped-CV R² is now
+  0.62 / 0.70 / 0.54 (lower, because of the nuisance terms, but honest).
+  The out-of-range check now uses a leave-cell-out threshold. Only 1.2% of
+  real Severson snapshots fall outside (9-14% below 85% capacity), down from
+  every snapshot below 90%. Hold-out Spearman is −0.85 to −0.88 over
+  3 seeds. FRESH_TOTAL went from 0.10 to 0.15 to match the new noise floor
+  (3 modes × MAE 0.03-0.037).
+- **Still weak at 4C:** many near-fresh Severson snapshots come out as mixed
+  LAM and grade C. At 4C, treat the mechanism split as indicative only.
+- **`predict(file, model="auto")`** now picks the path from the curve itself:
+  - **slow path:** if the tallest dQ/dV peak is above 3.25 V and narrower
+    than 25 mV (a C/25-like discharge), the twin is fitted to the upload
+    against a population fresh reference built from the 7 Wheeler cycle-0
+    checkups (`models/twin_slow.joblib`, from `scripts/fit_twin_reference.py`).
+    It takes about 15-50 s per file. Confidence is the share of grades that
+    stay the same when each mode is jittered by ±0.02.
+  - **fast path:** otherwise the 4C forest path, as before.
+  - Both paths set `features["path"]` to `"slow"` or `"fast"`.
+- **Samples:** `data/samples/wheeler_6a_cycle{0,1500,3300}_C25.csv` grade A,
+  B (LLI 0.17) and C (LLI 0.40).
