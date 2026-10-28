@@ -1,0 +1,128 @@
+{
+  "k_by_bic": 3,
+  "bic": {
+    "1": -603.1491908411082,
+    "2": -948.1501549335877,
+    "3": -1006.2160875106424,
+    "4": -994.5684954125977,
+    "5": -989.1669563456719,
+    "6": -991.8115858821064,
+    "7": -986.7054976390147
+  },
+  "cluster_means_ordered": [
+    [
+      0.223,
+      0.013,
+      0.023
+    ],
+    [
+      0.445,
+      0.066,
+      0.062
+    ],
+    [
+      0.577,
+      0.444,
+      0.083
+    ]
+  ],
+  "tuning_clusters": [
+    {
+      "cluster": 0,
+      "n": 65,
+      "soh_median": 0.789,
+      "LLI": 0.219,
+      "LAM_PE": 0.009,
+      "LAM_NE": 0.021,
+      "rule_grades": {
+        "B": 30,
+        "A": 19,
+        "C": 16
+      },
+      "majority_grade": "B"
+    },
+    {
+      "cluster": 1,
+      "n": 29,
+      "soh_median": 0.553,
+      "LLI": 0.454,
+      "LAM_PE": 0.071,
+      "LAM_NE": 0.063,
+      "rule_grades": {
+        "C": 28,
+        "B": 1
+      },
+      "majority_grade": "C"
+    },
+    {
+      "cluster": 2,
+      "n": 9,
+      "soh_median": 0.437,
+      "LLI": 0.554,
+      "LAM_PE": 0.567,
+      "LAM_NE": 0.045,
+      "rule_grades": {
+        "C": 9
+      },
+      "majority_grade": "C"
+    }
+  ],
+  "blind_clusters": [
+    {
+      "cluster": 0,
+      "n": 75,
+      "soh_median": 0.761,
+      "LLI": 0.251,
+      "LAM_PE": 0.009,
+      "LAM_NE": 0.021,
+      "rule_grades": {
+        "B": 37,
+        "C": 21,
+        "A": 17
+      },
+      "majority_grade": "B"
+    },
+    {
+      "cluster": 1,
+      "n": 18,
+      "soh_median": 0.559,
+      "LLI": 0.448,
+      "LAM_PE": 0.043,
+      "LAM_NE": 0.055,
+      "rule_grades": {
+        "C": 16,
+        "B": 2
+      },
+      "majority_grade": "C"
+    }
+  ],
+  "cluster_to_grade_from_tuning": {
+    "0": "B",
+    "1": "C",
+    "2": "C"
+  },
+  "tuning": {
+    "n": 103,
+    "ari_cluster_vs_rule_grade": 0.13301814793658523,
+    "cluster_majority_grade_agrees_with_rule": 0.6504854368932039,
+    "spearman_cluster_vs_soh": -0.7283441744963174,
+    "spearman_rule_grade_vs_soh": -0.88684984330641,
+    "cluster_goes_back_with_age": 6,
+    "steps": 96
+  },
+  "blind_no_refit": {
+    "n": 93,
+    "ari_cluster_vs_rule_grade": 0.06521965329948182,
+    "cluster_majority_grade_agrees_with_rule": 0.5698924731182796,
+    "spearman_cluster_vs_soh": -0.4623676571067771,
+    "spearman_rule_grade_vs_soh": -0.8851377215600216,
+    "cluster_goes_back_with_age": 4,
+    "steps": 87
+  },
+  "blind_refit_ari_vs_frozen": 0.4971094739865367,
+  "bootstrap_blind_ari_median": 0.8584699670491087,
+  "bootstrap_blind_ari_p10_p90": [
+    0.6918309978531171,
+    0.9556892897244523
+  ]
+}

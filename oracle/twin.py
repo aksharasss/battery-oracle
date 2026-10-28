@@ -51,9 +51,13 @@ def signature(curve: DischargeCurve) -> Signature:
     return Signature(_q_of_v(curve), np.interp(grid, ica.voltage, ica.dqdv), curve.total_capacity)
 
 
-def _model(design, c_rate, v_max, v_min, **deg) -> Signature:
+def _model(design, c_rate, v_max, v_min, v_shift=0.0, **deg) -> Signature:
     c = synth.generate(**deg, c_rate=c_rate, v_max=v_max, v_min=v_min, n=2000,
                        noise_v=0, design=design)
+    if v_shift:
+        # Charge-mode curves: the polarisation adds to the OCV instead of
+        # subtracting, so the whole curve sits v_shift higher (hysteresis).
+        c = replace(c, voltage=c.voltage + v_shift)
     return signature(c)
 
 
@@ -67,41 +71,49 @@ DESIGN_FIELDS = ("c_pe", "c_ne", "li", "sigma0", "gr_w_scale")
 
 
 def fit_design(fresh: DischargeCurve, c_rate: float, v_max: float = 3.65, v_min: float = 2.5,
-               base: synth.CellDesign | None = None, w_shape: float = 0.01):
+               base: synth.CellDesign | None = None, w_shape: float = 0.01,
+               fit_shift: bool = False):
+    """Fit the cell design to a fresh curve. With fit_shift=True a voltage
+    offset (charge-mode hysteresis, see _model) is fitted too and the result
+    is (design, rms, v_shift); otherwise (design, rms)."""
     base = base or synth.CellDesign()
     sig = signature(fresh)
-    x0 = [getattr(base, f) for f in DESIGN_FIELDS] + list(base.gr_du)
-    lo = [0.8, 0.8, 0.8, 0.0005, 0.3, -0.03, -0.03]
-    hi = [1.6, 1.8, 1.4, 0.03, 2.0, 0.03, 0.03]
+    x0 = [getattr(base, f) for f in DESIGN_FIELDS] + list(base.gr_du) + ([0.02] if fit_shift else [])
+    lo = [0.8, 0.8, 0.8, 0.0005, 0.3, -0.03, -0.03] + ([-0.06] if fit_shift else [])
+    hi = [1.6, 1.8, 1.4, 0.03, 2.0, 0.03, 0.03] + ([0.06] if fit_shift else [])
 
     def make(x):
         return replace(base, **dict(zip(DESIGN_FIELDS, x[:5])), gr_du=(x[5], x[6]))
 
     def f(x):
-        return _residual(sig, _model(make(x), c_rate, v_max, v_min), w_shape)
+        return _residual(sig, _model(make(x), c_rate, v_max, v_min,
+                                     v_shift=x[7] if fit_shift else 0.0), w_shape)
 
     r = least_squares(f, np.clip(x0, lo, hi), bounds=(lo, hi), diff_step=1e-3, max_nfev=400)
-    return make(r.x), float(np.sqrt(np.mean(r.fun ** 2)))
+    rms = float(np.sqrt(np.mean(r.fun ** 2)))
+    return (make(r.x), rms, float(r.x[7])) if fit_shift else (make(r.x), rms)
 
 
-def model_error(fresh: DischargeCurve, design, c_rate, v_max=3.65, v_min=2.5) -> Signature:
+def model_error(fresh: DischargeCurve, design, c_rate, v_max=3.65, v_min=2.5,
+                v_shift: float = 0.0) -> Signature:
     """Measured fresh minus fitted fresh model: the part of the curve the
     model can't reproduce. fit_mechanisms subtracts it from aged curves so
     that this constant mismatch isn't mistaken for degradation."""
-    a, m = signature(fresh), _model(design, c_rate, v_max, v_min)
+    a, m = signature(fresh), _model(design, c_rate, v_max, v_min, v_shift=v_shift)
     return Signature(a.q - m.q, a.dqdv - m.dqdv, a.q_total - m.q_total)
 
 
 def fit_mechanisms(aged: DischargeCurve, design: synth.CellDesign, c_rate: float,
                    v_max: float = 3.65, v_min: float = 2.5, w_shape: float = 0.01,
-                   x0=(0.05, 0.05, 0.05), error: Signature | None = None) -> tuple[dict, float]:
+                   x0=(0.05, 0.05, 0.05), error: Signature | None = None,
+                   v_shift: float = 0.0) -> tuple[dict, float]:
     sig = signature(aged)
     if error is not None:
         sig = Signature(sig.q - np.nan_to_num(error.q), sig.dqdv - np.nan_to_num(error.dqdv),
                         sig.q_total - error.q_total)
 
     def f(x):
-        return _residual(sig, _model(design, c_rate, v_max, v_min,
+        return _residual(sig, _model(design, c_rate, v_max, v_min, v_shift=v_shift,
                                      lli=x[0], lam_pe=x[1], lam_ne=x[2]), w_shape)
 
     best = None
