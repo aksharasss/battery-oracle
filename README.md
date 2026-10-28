@@ -218,3 +218,83 @@ Protocol: `docs/heldout_protocol.md`; script: `scripts/heldout_test.py`; results
 - 25 °C files of the tuning cells: not run (a file with comma decimals broke the loader).
 - Demo uploads: `data/samples/heldout/HELDOUT_wheeler_*` are fair held-out. The older
   `data/samples/wheeler_6a_*` and `app/samples/*` are not (tuning cell / synthetic).
+
+## Post-freeze improvements (2026-10-28)
+
+Everything below changed after the held-out test, so the blind cells are no
+longer blind for these changes. The grade rule (`grade_of` and its
+thresholds) is **unchanged**; mechanisms and grades on the slow path are
+unchanged too.
+
+**1. Slow-path confidence (`oracle/predict.py`).** The old rule halved the
+confidence when the fit rms was above 0.02. But fresh cells fit at
+0.020–0.046 against the population fresh reference (cell-to-cell spread,
+not ageing), while aged, LLI-dominated cells fit at ~0.015: on the blind
+cells rms rises with SOH (Spearman +0.86). So the halving hit healthy cells,
+e.g. every blind cycle-0 checkup showed 50%. The cut-off is now 0.05, just
+above the worst fresh cell of all 13. A per-cell fresh reference is not an
+option for the app, because a retired cell arrives with no fresh record.
+Checked on the 7 tuning cells through the app path (`scripts/confidence_check.py`,
+`data/processed/conf_tuning.csv`); "off-band" means the grade disagrees with
+measured SOH (A >85%, B 65–85%, C <65%):
+
+| | old (0.02) | new (0.05) |
+|---|---|---|
+| Tuning cells, 103 checkups: median confidence | 0.95 | 0.97 |
+| share of checkups under 50% | 20% | 1% |
+| AUC, low confidence flags an off-band grade | 0.68 | 0.75 |
+| Fresh checkups, median confidence | 0.50 | 1.00 |
+| Blind cells, 93 checkups (same comparison) | AUC 0.73, 27% under 50% | AUC 0.82, 4% under 50% |
+| Demo samples 2a c0 / 5b c600 / 6b c1800 | 50 / 36 / 46% | 100 / 71 / 93% |
+
+**2. Dubarry as charge curves (`oracle/twin.py`, `fit_design(fit_shift=True)`).**
+Dubarry's curves are C/25 charges. The twin now fits a voltage offset
+(hysteresis, +28 mV) to the fresh curve and keeps it for the aged fits.
+Same 36 labelled curves from files 2 and 3 for both treatments
+(`scripts/dubarry_charge_check.py`, `data/processed/dubarry_charge/`):
+
+| | as discharge (old) | charge mode (new) |
+|---|---|---|
+| Fresh fit rms | 0.029 | 0.013 |
+| R² LLI / LAM_PE / LAM_NE | −0.47 / −0.11 / −0.62 | 0.58 / −0.28 / 0.53 |
+| MAE LLI / LAM_PE / LAM_NE | 0.079 / 0.080 / 0.110 | 0.032 / 0.083 / 0.049 |
+| Dominant mode correct | 22% | 53% |
+| ... when the true mode is graphite loss | 0 / 12 | 9 / 12 |
+| Grade agreement | 67% | 69% |
+| Severity vs true capacity loss (Spearman) | 0.87 | 0.90 |
+
+So most of the "graphite loss is never found" result came from fitting
+charge curves as discharges. LAM_PE is still poorly separated (it trades off
+with LLI), and n = 36 is small. The app is unaffected: Wheeler and uploads
+are discharges.
+
+**3. Unsupervised clusters on real cells (`scripts/cluster_mechanisms.py`,
+`models/clusters_wheeler.joblib`, `data/processed/clusters_wheeler.json`).**
+A Gaussian mixture on the twin's (LLI, LAM_PE, LAM_NE) for the 7 tuning
+cells (103 checkups); BIC picks k = 3. Clusters are named by their own
+medians, never by the rule, then applied unchanged to the 6 blind cells:
+
+| Cluster | Median LLI / LAM_PE / LAM_NE | Tuning: n, median SOH, rule grades | Blind: n, median SOH, rule grades |
+|---|---|---|---|
+| 0: lithium loss, mild to moderate | 0.22 / 0.01 / 0.02 | 65, 0.79, A19 B30 C16 | 75, 0.76, A17 B37 C21 |
+| 1: heavy lithium loss + some LAM | 0.45 / 0.07 / 0.06 | 29, 0.55, B1 C28 | 18, 0.56, B2 C16 |
+| 2: lithium + cathode loss | 0.55 / 0.57 / 0.05 | 9, 0.44, C9 | 0 |
+
+- The clusters find **mechanism type**, not wear level: cluster 2 is cell 5a's
+  LLI + LAM_PE path. Within the big LLI cluster ageing is a continuum, so the
+  GMM does not split A from B.
+- Agreement with the rule is weak: ARI 0.13 (tuning) / 0.07 (blind); the
+  cluster's majority grade matches the rule grade 65% / 57%. Cluster index
+  vs SOH: Spearman −0.73 / −0.46, against −0.89 / −0.89 for the rule grade.
+- Stable: refitting on 50 bootstrap resamples of the tuning cells gives a
+  median ARI of 0.86 (10–90%: 0.69–0.96) on the blind cells.
+- Reading: unsupervised structure confirms the mechanism groups, and the rule
+  adds what clustering can't, the severity thresholds. The app now reports the
+  cluster as a note on the slow path; the grade still comes from the rule.
+- A composition feature set (total loss + mode shares) orders by SOH better
+  (blind Spearman −0.84) but BIC then splits 7 fresh checkups into 3 tiny
+  clusters, so it is not used.
+
+**Data handling.** `scripts/extract_wheeler_c25.py` cuts the 4.7 GB of raw
+Wheeler CSVs to ~10 MB per cell; `wheeler.iter_npz` reads it. On 1a it
+reproduces the frozen run to within 0.0001 in rms and 0.005 in mechanisms.

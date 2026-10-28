@@ -27,3 +27,9 @@ check compared CRLF files after stripping CR on one side only, so it falsely fla
 `twin.py`, `synth.py` and `predict.py`; and Dubarry files 2 and 3 hold only the voltage
 matrix, so `Qnorm`/`pathinfo` are now read from file 1. `git diff 0848e1b -- oracle models`
 is empty.
+
+**Post-freeze changes (2026-10-28):** confidence cut-off 0.02 → 0.05, twin
+charge mode (opt-in, default unchanged), Wheeler mechanism clusters reported
+as a note. The grade rule is unchanged. See README, "Post-freeze improvements".
+The frozen hashes of `oracle/predict.py` and `oracle/twin.py` no longer match,
+as expected.

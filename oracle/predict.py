@@ -33,6 +33,11 @@ DEFAULT_MODEL = "severson"
 # Allowed main-peak shift vs the fresh reference (V). Ageing pushes the
 # peak down (Severson reaches -78 mV at end of life); it never moves up much.
 PEAK_SHIFT_RANGE = (-0.10, 0.03)
+# Slow path: fit rms above this halves the confidence. Fresh cells fit at
+# 0.02-0.046 against the population reference (cell-to-cell spread, not
+# ageing), aged LLI-dominated cells at ~0.015, so the old 0.02 cut penalised
+# healthy cells. 0.05 sits just above the worst fresh cell of 13.
+SLOW_POOR_FIT_RMS = 0.05
 
 
 @dataclass
@@ -54,6 +59,24 @@ def load_twin() -> dict:
     if not path.exists():
         raise FileNotFoundError(f"no twin reference at {path}; run scripts/fit_twin_reference.py first")
     return joblib.load(path)
+
+
+@lru_cache(maxsize=1)
+def load_clusters() -> dict | None:
+    path = MODEL_DIR / "clusters_wheeler.joblib"
+    return joblib.load(path) if path.exists() else None
+
+
+def wheeler_cluster(mech: dict) -> tuple[int, dict] | None:
+    """Which unsupervised group of Wheeler checkups (GMM on the twin's
+    mechanism estimates, scripts/cluster_mechanisms.py) this cell falls in,
+    with clusters numbered from least to most worn."""
+    cl = load_clusters()
+    if cl is None:
+        return None
+    raw = int(cl["gmm"].predict(np.array([[mech[m] for m in ("LLI", "LAM_PE", "LAM_NE")]]))[0])
+    k = int(np.argsort(cl["order"])[raw])
+    return k, next(r for r in cl["summary"] if r["cluster"] == k)
 
 
 def is_slow_rate(curve) -> bool:
@@ -89,16 +112,24 @@ def _predict_slow(curve) -> GradeResult:
     feats = extract_peaks(ica, preset("slow")[1])
     notes = ["Slow-rate path: half-cell model fitted directly to this discharge "
              "(validated on Wheeler et al. 2025 C/25 checkups, Spearman -0.84 vs capacity)."]
-    if rms > 0.02:
+    if rms > SLOW_POOR_FIT_RMS:
         confidence *= 0.5
         notes.append(f"Poor model fit (rms {rms:.3f}); the mechanism split is uncertain.")
     notes.append("Graphite loss (LAM_NE) is a lower bound: it only shows once graphite "
                  "limits the capacity.")
+    cluster = wheeler_cluster(mech)
+    if cluster is not None:
+        k, row = cluster
+        notes.append(f"Unsupervised group: Wheeler cluster {k} of {len(load_clusters()['summary'])} "
+                     f"(median LLI {row['LLI']:.2f}, LAM_PE {row['LAM_PE']:.2f}, LAM_NE "
+                     f"{row['LAM_NE']:.2f}; median SOH {row['soh_median']:.2f}). Clusters group "
+                     "cells by mechanism type; the grade comes from the rule.")
     return GradeResult(
         grade=grade, confidence=confidence, mechanisms=mech,
         dominant=max(mech, key=mech.get) if sum(mech.values()) >= FRESH_TOTAL else "none",
         ica=ica, reference=t["reference_ica"],
-        features={**feats, "fit_rms": rms, "severity": severity(mech), "path": "slow"},
+        features={**feats, "fit_rms": rms, "severity": severity(mech), "path": "slow",
+                  "cluster": cluster[0] if cluster else None},
         second_life_use=SECOND_LIFE_USE[grade], notes=notes)
 
 
