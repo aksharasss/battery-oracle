@@ -4,15 +4,16 @@
 
 Upload a partial discharge CSV (or pick a bundled sample) and the page shows
 the second-life grade, the mechanism breakdown (LLI / LAM_PE / LAM_NE) and
-the dQ/dV curve against a fresh-cell reference.
+the dQ/dV curve against a fresh-cell reference, drawn as one lab-notebook
+sheet: graphite ink on a millimetre grid, with a red pen for what changed.
 """
 from __future__ import annotations
 
+import html
 import sys
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
@@ -21,7 +22,6 @@ ROOT = APP_DIR.parent
 for p in (ROOT, APP_DIR):
     if str(p) not in sys.path:
         sys.path.insert(0, str(p))
-
 
 
 def _pick_predict():
@@ -53,52 +53,33 @@ SAMPLES.update({
     "Synthetic slow-rate: severe fade": APP_DIR / "samples" / "severe.csv",
 })
 
-# Grade colours read on both the light and dark Streamlit themes.
-GRADE_COLOR = {"A": "#2e9e6e", "B": "#d08a1a", "C": "#d9483e"}
 MECH_LABEL = {
     "LLI": "Loss of lithium inventory",
     "LAM_PE": "Loss of active material, cathode (LFP)",
     "LAM_NE": "Loss of active material, anode (graphite)",
 }
-MECH_COLOR = {"LLI": "#3b6fb6", "LAM_PE": "#c0612b", "LAM_NE": "#7a5bb5"}
-PEAK_COLOR = "#8a8f98"
-GRID = "rgba(128,128,128,0.2)"
 
-st.set_page_config(page_title="Battery Oracle", page_icon="🔋", layout="wide")
-st.markdown(
-    """
-    <style>
-      .block-container {padding-top: 2rem; max-width: 1200px;}
-      .grade-card {border-radius: 14px; padding: 22px 26px; margin-bottom: 8px;}
-      .grade-card .letter {font-size: 64px; font-weight: 700; line-height: 1;}
-      .grade-card .label {font-size: 13px; letter-spacing: .06em; text-transform: uppercase; opacity: .8;}
-      .grade-card .use {font-size: 17px; margin-top: 10px; font-weight: 500;}
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+# Two sheets of the same notebook. Three ink values on each (ground, graphite,
+# red pen) plus the grid and a muted graphite for secondary text.
+SHEETS = {
+    "dark": dict(ground="#0d1611", grid="#1b2c22", grid2="#2d4a37", ink="#eaf2ec", muted="#a3bcab",
+                 rule="#55705f", pen="#ff7a66", panel="#101b14", fresh="#8fae9b", select="#29473a"),
+    "light": dict(ground="#f6faf7", grid="#d6e8dc", grid2="#afd0ba", ink="#1d2227", muted="#4b5a54",
+                  rule="#1d2227", pen="#c42a22", panel="#eef5f0", fresh="#5d6b65", select="#cfe5d6"),
+}
 
-st.title("Battery Oracle 2.0")
-st.caption(
-    "Second-life grading for retired LFP cells from a single partial discharge, "
-    "using Incremental Capacity Analysis (dQ/dV) to read the degradation mechanism."
-)
-
-if USING_STUB:
-    st.info(
-        "Running on the placeholder grader. ICA and peak extraction are real, but the grade "
-        "and mechanism split come from simple rules until the fitted pipeline is connected.",
-        icon="🧪",
-    )
+st.set_page_config(page_title="Battery Oracle", page_icon=":material/battery_charging_full:", layout="wide")
 
 with st.sidebar:
-    st.header("Input")
+    st.markdown('<div class="bo-mast">Battery Oracle <span>2.0</span></div>', unsafe_allow_html=True)
     upload = st.file_uploader(
         "Partial discharge CSV",
         type=["csv"],
         help="Needs a voltage column plus either a capacity column, or current and time columns.",
     )
-    sample = st.selectbox("…or try a sample", ["(none)", *SAMPLES], index=0 if upload else 1)
+    default = next((i + 1 for i, k in enumerate(SAMPLES) if "cycle 311" in k), 1)
+    sample = st.selectbox("Or pick a sample", ["(none)", *SAMPLES], index=0 if upload else default)
+    dark = st.toggle("Dark sheet", value=True, help="Switch between the dark and light notebook sheet.")
     with st.expander("File format"):
         st.markdown(
             "One row per sample, in time order, covering roughly **3.45 V down to 2.9 V**. "
@@ -109,9 +90,116 @@ with st.sidebar:
         )
         st.code("time_s,voltage_V,capacity_Ah\n0,3.450,0.000\n1.2,3.449,0.0004\n…", language="text")
 
+T = SHEETS["dark" if dark else "light"]
+st.html(
+    f"""
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Archivo:wght@900&family=Caveat:wght@600&display=swap");
+:root {{
+  --ground: {T['ground']}; --grid: {T['grid']}; --grid2: {T['grid2']}; --ink: {T['ink']}; --muted: {T['muted']};
+  --rule: {T['rule']}; --pen: {T['pen']}; --panel: {T['panel']}; --select: {T['select']};
+  --ui: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --display: "Archivo", "Segoe UI", sans-serif;
+  --hand: "Caveat", "Segoe Print", cursive;
+}}
+/* the sheet: millimetre grid with a heavier line every 5 mm */
+.stApp {{ background-color: var(--ground); color: var(--ink); font-family: var(--ui);
+  background-image: linear-gradient(var(--grid2) 1px, transparent 1px), linear-gradient(90deg, var(--grid2) 1px, transparent 1px),
+    linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px; }}
+.stApp p, .stApp label, .stApp li, [data-testid="stMarkdownContainer"] {{ color: var(--ink); }}
+.stApp h1, .stApp h2, .stApp p, .stApp li, .stApp label, .stApp button, .stApp input, .stApp dt, .stApp dd, .stApp td, .stApp th,
+[data-testid="stMarkdownContainer"] *:not([data-testid="stIconMaterial"]), [data-baseweb="select"] div, [data-baseweb="popover"] li,
+[data-testid="stSpinner"] p {{ font-family: var(--ui) !important; }}
+.stApp .bo-letter {{ font-family: var(--display) !important; }}
+::selection {{ background: var(--pen); color: var(--ground); }}
+*:focus-visible {{ outline: 2px solid var(--pen) !important; outline-offset: 2px; }}
+* {{ scrollbar-color: var(--rule) var(--ground); }}
+[data-testid="stHeader"] {{ background: transparent; }}
+.block-container {{ max-width: 1240px; padding-top: 1.2rem; padding-bottom: 3rem; }}
+/* sidebar: the notebook's margin column */
+[data-testid="stSidebar"] {{ background: var(--panel); border-right: 1px solid var(--rule); }}
+[data-testid="stSidebar"] * {{ color: var(--ink); }}
+.bo-mast {{ font-family: var(--ui); font-weight: 700; font-size: 1.35rem; padding: .2rem 0 1rem;
+  border-bottom: 1px solid var(--rule); margin-bottom: .6rem; }}
+.bo-mast span {{ color: var(--pen); }}
+[data-testid="stWidgetLabel"] p {{ font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted) !important; }}
+[data-testid="stFileUploaderDropzone"] {{ background: transparent; border: 1px dashed var(--rule); border-radius: 0; }}
+[data-testid="stFileUploaderDropzone"] button, .stButton button {{ background: transparent; color: var(--ink);
+  border: 1px solid var(--rule); border-radius: 0; }}
+[data-testid="stFileUploaderDropzone"] button:hover {{ border-color: var(--pen); color: var(--pen); }}
+[data-baseweb="select"] > div {{ background: var(--ground) !important; border: 1px solid var(--rule) !important; border-radius: 0 !important; color: var(--ink) !important; }}
+[data-baseweb="select"] svg {{ fill: var(--ink); }}
+[data-baseweb="select"] input {{ color: var(--ink) !important; background: transparent !important; }}
+[data-baseweb="select"] input:focus-visible {{ outline: none !important; }}
+[data-baseweb="select"] > div:focus-within {{ border-color: var(--pen) !important; }}
+[data-testid="stCheckbox"] label > div:first-child {{ border: 1px solid var(--rule); }}
+[data-baseweb="popover"] ul, [data-baseweb="popover"] li {{ background: var(--panel) !important; color: var(--ink) !important; font-family: var(--ui); }}
+[data-baseweb="popover"] li[aria-selected="true"], [data-baseweb="popover"] li:hover {{ background: var(--select) !important; }}
+[data-testid="stExpander"] details {{ border: 1px solid var(--rule); border-radius: 0; background: transparent; }}
+[data-testid="stExpander"] summary:hover p {{ color: var(--pen); }}
+[data-testid="stCode"] pre, .stCode pre {{ background: var(--ground) !important; border: 1px solid var(--rule); border-radius: 0; }}
+[data-testid="stCode"] code {{ color: var(--ink) !important; }}
+[data-testid="stSpinner"] p, [data-testid="stSpinner"] {{ color: var(--muted); font-size: 1rem; }}
+[data-testid="stSpinner"] i {{ border-top-color: var(--pen) !important; }}
+.stApp code {{ color: var(--ink); background: transparent; }}
+/* the result sheet */
+.bo-head {{ display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; flex-wrap: wrap;
+  border-bottom: 1px solid var(--rule); padding-bottom: .7rem; margin-bottom: 1.4rem; }}
+.bo-head h1 {{ font-family: var(--ui); font-weight: 700; font-size: 1.9rem; line-height: 1.15; margin: 0; padding: 0; color: var(--ink); }}
+.bo-head .sub {{ color: var(--muted); font-size: 1rem; margin-top: .3rem; }}
+.bo-stamp {{ display: inline-block; border: 2px solid var(--pen); color: var(--pen); font-weight: 700; font-size: .78rem;
+  letter-spacing: .1em; text-transform: uppercase; padding: .3rem .6rem; transform: rotate(-3deg); white-space: nowrap; }}
+.bo-grade {{ padding: .2rem 0 0; }}
+.bo-letter {{ font-family: var(--display); font-weight: 900; font-size: 8.5rem; line-height: .82; letter-spacing: -.02em; margin: 0 0 .6rem; }}
+.bo-letter.C {{ color: var(--pen); }}
+.bo-use {{ font-size: 1.25rem; font-weight: 700; line-height: 1.3; margin: 0 0 1rem; }}
+.bo-facts {{ display: grid; grid-template-columns: auto 1fr; gap: .35rem 1.2rem; font-size: 1rem; margin: 0; }}
+.bo-facts dt {{ color: var(--muted); }} .bo-facts dd {{ margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }}
+.bo-mech {{ border-left: 1px solid var(--rule); padding: .2rem 0 .4rem 2rem; }}
+.bo-mech h2, .bo-plot h2 {{ font-family: var(--ui); font-size: 1.15rem; font-weight: 700; margin: 0 0 .25rem; padding: 0; color: var(--ink); }}
+.bo-mech .lead, .bo-plot .lead {{ color: var(--muted); margin: 0 0 1.1rem; font-size: .95rem; }}
+.bo-bar {{ margin: 1.05rem 0; font-size: 1.05rem; }}
+.bo-bar .row {{ display: flex; justify-content: space-between; gap: 1rem; margin-bottom: .35rem; }}
+.bo-bar.dom .name {{ font-weight: 700; text-decoration: underline 2px var(--pen); text-underline-offset: 5px; }}
+.bo-bar .track {{ display: block; height: 1.25rem; border: 1px solid var(--rule); position: relative;
+  background-image: repeating-linear-gradient(90deg, var(--rule) 0 1px, transparent 1px var(--tick)); }}
+.bo-bar .fill {{ position: absolute; inset: 0 auto 0 0; background: var(--ink); }}
+.bo-bar.dom .fill {{ background: var(--pen); }}
+.bo-bar .val {{ font-weight: 700; font-variant-numeric: tabular-nums; }}
+.bo-note {{ border: 1.5px solid var(--rule); background: transparent; padding: .6rem .85rem; margin: .8rem 0 0; font-size: .95rem; line-height: 1.45; }}
+.bo-note b {{ display: inline-block; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; margin: 0 .5rem .15rem 0; padding: 0 .35rem; border: 1px solid currentColor; color: var(--muted); }}
+.bo-note.pen {{ border: 2px solid var(--pen); }} .bo-note.pen b {{ color: var(--pen); }}
+.bo-plot {{ margin-top: 1.4rem; padding-left: 2rem; }}
+.bo-caption {{ color: var(--muted); font-size: .92rem; margin: .4rem 0 0; max-width: 75ch; }}
+.bo-table {{ width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: .95rem; }}
+.bo-table th {{ text-align: left; font-weight: 700; color: var(--muted); border-bottom: 1px solid var(--rule); padding: .4rem .5rem; }}
+.bo-table td {{ border-bottom: 1px solid var(--grid2); padding: .4rem .5rem; }}
+.bo-empty {{ border: 1px dashed var(--rule); padding: 2rem; max-width: 40rem; font-size: 1.1rem; }}
+[data-testid="stPlotlyChart"] {{ border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); background: transparent; margin-left: 2rem; }}
+@media (max-width: 760px) {{
+  .bo-letter {{ font-size: 6rem; }} .bo-mech {{ border-left: 0; border-top: 1px solid var(--rule); padding: 1rem 0 0; }} .bo-plot {{ padding-left: 0; }} [data-testid="stPlotlyChart"] {{ margin-left: 0; }}
+}}
+</style>
+""",
+)
+
+
+def note(title: str, body: str, pen: bool = False) -> str:
+    return (f'<div class="bo-note{" pen" if pen else ""}"><b>{html.escape(title)}</b>'
+            f'{html.escape(body)}</div>')
+
+
+if USING_STUB:
+    st.markdown(note("Placeholder grader",
+                     "ICA and peak extraction are real, but the grade and mechanism split come from "
+                     "simple rules until the fitted pipeline is connected.", pen=True),
+                unsafe_allow_html=True)
+
 source = upload if upload is not None else SAMPLES.get(sample)
 if source is None:
-    st.write("Upload a partial discharge CSV in the sidebar to grade a cell.")
+    st.markdown('<div class="bo-empty">Upload a partial-discharge CSV in the sidebar, or pick one of the '
+                'sample cells, to grade a cell.</div>', unsafe_allow_html=True)
     st.stop()
 
 name = upload.name if upload is not None else sample
@@ -136,130 +224,142 @@ try:
                     "half-cell fit and can take up to a minute."):
         res = run(data, USING_STUB, _model_mtime())
 except ValueError as e:
-    st.error(f"Couldn't grade **{name}**: {e}")
+    st.markdown(note(f"Couldn't grade {name}", f"{e}. Check the file has a voltage column and a "
+                     "capacity column (or current and time), covering the discharge.", pen=True),
+                unsafe_allow_html=True)
     st.stop()
 
-st.subheader(name)
-left, right = st.columns([1, 2], gap="large")
+path = res.features.get("path")
+if path == "slow":
+    stamp, method = "Slow path · twin fit", "Half-cell twin fit (C/25)"
+elif path == "fast":
+    stamp, method = "Fast path · 4C model", "4C feature model"
+else:
+    stamp, method = "Placeholder", "Rule-based placeholder"
+st.markdown(
+    f'<div class="bo-head"><div><h1>{html.escape(name)}</h1>'
+    f'<div class="sub">Second-life grading from one partial discharge, read through its dQ/dV curve</div></div>'
+    f'<span class="bo-stamp">{html.escape(stamp)}</span></div>',
+    unsafe_allow_html=True,
+)
+
+mech_notes = [n for n in res.notes if n.startswith(("Mechanism split", "Outside the synthetic"))]
+other_notes = [n for n in res.notes if n not in mech_notes]
+left, right = st.columns([5, 7], gap="large")
 
 with left:
-    fg = GRADE_COLOR.get(res.grade, "#888888")
+    dominant = "None (fresh)" if res.dominant == "none" else res.dominant.replace("_", " ")
+    facts = [("Confidence", f"{res.confidence:.0%}"), ("Dominant mechanism", dominant), ("Method", method)]
+    rms = res.features.get("fit_rms")
+    if path == "slow" and rms is not None and np.isfinite(rms):
+        facts.append(("Fit RMS", f"{rms:.3f}"))
+    ood = res.features.get("ood_ratio")
+    if ood is not None and np.isfinite(ood):
+        facts.append(("Calibration distance", f"{ood:.1f}× training spread"))
+    dl = "".join(f"<dt>{k}</dt><dd>{html.escape(v)}</dd>" for k, v in facts)
+    notes_html = "".join(note("Outside calibration range" if n.startswith("Outside") else "Mechanism split",
+                              n, pen=n.startswith("Outside")) for n in mech_notes)
+    for n in other_notes:
+        if n.startswith("Out of range"):
+            notes_html += note("Out of range", n, pen=True)
+        elif n.startswith("Slow-rate path"):
+            notes_html += note("Method", n)
+        else:
+            notes_html += note("Caveat", n)
     st.markdown(
-        f"""<div class="grade-card" style="background:{fg}1f;border:1px solid {fg}66">
-              <div class="label" style="color:{fg}">Second-life grade</div>
-              <div class="letter" style="color:{fg}">{res.grade}</div>
-              <div class="use">{res.second_life_use}</div>
-            </div>""",
+        f'<div class="bo-grade"><div class="bo-letter {res.grade}" role="img" aria-label="Second-life grade {res.grade}">{res.grade}</div>'
+        f'<p class="bo-use">{html.escape(res.second_life_use)}</p><dl class="bo-facts">{dl}</dl></div>{notes_html}',
         unsafe_allow_html=True,
     )
-    c1, c2 = st.columns(2)
-    c1.metric("Confidence", f"{res.confidence:.0%}")
-    dominant = "None" if res.dominant == "none" else res.dominant.replace("_", " ")
-    c2.metric("Dominant mechanism", dominant)
-    path = res.features.get("path")
-    if path == "slow":
-        rms = res.features.get("fit_rms")
-        st.caption("Method: half-cell twin fitted to this discharge (slow-rate path)"
-                   + (f", fit RMS {rms:.3f}" if rms is not None and np.isfinite(rms) else ""))
-    elif path == "fast":
-        st.caption("Method: 4C feature model calibrated on synthetic cells (fast path)")
-    # Notes about the mechanism split sit under the bars they qualify;
-    # out-of-range input is an error, everything else a warning.
-    mech_notes = [n for n in res.notes if n.startswith(("Mechanism split", "Outside the synthetic"))]
-    ood = res.features.get("ood_ratio")
-    if ood is not None and np.isfinite(ood) and ood > 1:
-        st.markdown(
-            f"<span style='display:inline-block;padding:2px 10px;border-radius:999px;"
-            f"background:#d08a1a26;color:#d08a1a;font-size:13px;font-weight:600'>"
-            f"Outside calibration range · {ood:.1f}× training spread</span>",
-            unsafe_allow_html=True,
-        )
-    for note in res.notes:
-        if note in mech_notes:
-            continue
-        if note.startswith("Out of range"):
-            st.error(note)
-        elif note.startswith("Slow-rate path"):
-            st.info(note)
-        else:
-            st.warning(note)
 
 with right:
-    st.markdown("**Mechanism breakdown**  \nEstimated loss against a fresh cell, by mechanism.")
-    for note in mech_notes:
-        # extrapolation is a warning; the calibration note is context
-        (st.warning if note.startswith("Outside") else st.info)(note, icon="⚠️")
     keys = ["LLI", "LAM_PE", "LAM_NE"]
-    vals = [res.mechanisms.get(k, 0.0) for k in keys]
-    fig = go.Figure(
-        go.Bar(
-            x=vals,
-            y=[MECH_LABEL[k] for k in keys],
-            orientation="h",
-            marker_color=[MECH_COLOR[k] for k in keys],
-            text=[f"{v:.0%}" for v in vals],
-            textposition="outside",
-            cliponaxis=False,
-            hovertemplate="%{y}: %{x:.1%}<extra></extra>",
-        )
+    vals = [float(res.mechanisms.get(k, 0.0)) for k in keys]
+    scale = max(0.4, max(vals) * 1.25)
+    rows = "".join(
+        f'<div class="bo-bar{" dom" if k == res.dominant else ""}"><div class="row"><span class="name">{MECH_LABEL[k]}</span>'
+        f'<span class="val">{v:.0%}</span></div>'
+        f'<span class="track" style="--tick:{0.1 / scale * 100:.3f}%"><span class="fill" style="width:{min(v / scale, 1) * 100:.1f}%"></span></span></div>'
+        for k, v in zip(keys, vals)
     )
-    fig.update_layout(
-        height=220,
-        margin=dict(l=0, r=40, t=10, b=10),
-        xaxis=dict(tickformat=".0%", range=[0, max(0.5, max(vals) * 1.25)], gridcolor=GRID),
-        yaxis=dict(autorange="reversed"),
-        showlegend=False,
+    st.markdown(
+        f'<div class="bo-mech"><h2>Mechanism breakdown</h2>'
+        f'<p class="lead">Estimated loss against a fresh cell. One scale, ticks every 10%, up to {scale:.0%}.</p>'
+        f'{rows}</div>',
+        unsafe_allow_html=True,
     )
-    st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
-st.markdown("**Incremental capacity curve (dQ/dV)**")
-fig = go.Figure()
-if res.reference is not None:
+    # dQ/dV on the graph paper, with the red-pen note on the biggest change from fresh
+    fig = go.Figure()
+    pen_note = None
+    if res.reference is not None:
+        fig.add_trace(go.Scatter(
+            x=res.reference.voltage, y=res.reference.dqdv, name="Fresh reference",
+            line=dict(color=T["fresh"], width=2, dash="dash"),
+            hovertemplate="%{x:.3f} V<br>%{y:.2f} Ah/V<extra>Fresh</extra>",
+        ))
+        # the red-pen note marks how far the main peak fell from the fresh cell's
+        v, y = np.asarray(res.ica.voltage), np.asarray(res.ica.dqdv)
+        ref_peak = float(np.nanmax(res.reference.dqdv))
+        if y.size and ref_peak > 0:
+            i = int(np.nanargmax(y))
+            fall = 1 - float(y[i]) / ref_peak
+            if fall > 0.10:  # only changes worth a note
+                # aim at the rising (high-voltage) flank at 85% of the peak, on this cell's curve alone
+                hv = np.where((v > v[i]) & (y <= 0.85 * y[i]))[0]
+                j = int(hv[np.argmin(v[hv] - v[i])]) if hv.size else i
+                pen_note = (float(v[j]), float(y[j]), fall, float(np.nanmin(v)), float(np.nanmax(v)))
     fig.add_trace(go.Scatter(
-        x=res.reference.voltage, y=res.reference.dqdv, name="Fresh reference",
-        line=dict(color="#9aa0a6", width=2, dash="dash"),
-        hovertemplate="%{x:.3f} V<br>%{y:.2f} Ah/V<extra>Fresh</extra>",
+        x=res.ica.voltage, y=res.ica.dqdv, name="This cell",
+        line=dict(color=T["ink"], width=3),
+        hovertemplate="%{x:.3f} V<br>%{y:.2f} Ah/V<extra>This cell</extra>",
     ))
-fig.add_trace(go.Scatter(
-    x=res.ica.voltage, y=res.ica.dqdv, name="This cell",
-    line=dict(color="#1f4e8c", width=2.5),
-    hovertemplate="%{x:.3f} V<br>%{y:.2f} Ah/V<extra>This cell</extra>",
-))
-peaks = sorted({k.split("_")[0] for k in res.features if k.endswith("_pos")})
-px, py, pt = [], [], []
-for p in peaks:
-    pos, h = res.features.get(f"{p}_pos"), res.features.get(f"{p}_height")
-    if pos is not None and h is not None and np.isfinite(pos) and np.isfinite(h):
-        px.append(pos); py.append(h); pt.append(p.upper())
-fig.add_trace(go.Scatter(
-    x=px, y=py, mode="markers+text", text=pt, textposition="top center", name="Peaks",
-    marker=dict(color=PEAK_COLOR, size=8, symbol="diamond"), showlegend=False,
-    hovertemplate="%{text}: %{x:.3f} V<extra></extra>",
-))
-fig.update_layout(
-    height=420,
-    margin=dict(l=0, r=0, t=10, b=0),
-    xaxis=dict(title="Voltage (V)", autorange="reversed", gridcolor=GRID),
-    yaxis=dict(title="dQ/dV (Ah/V)", gridcolor=GRID, rangemode="tozero"),
+    if pen_note:
+        vx, vy, frac, vmin, vmax = pen_note
+        # the note is written above the plot's top-right corner, clear of both curves,
+        # and a short red-pen arrow points at this cell's peak flank
+        pen = dict(family="Caveat, Segoe Print, cursive", size=24, color=T["pen"])
+        fig.add_annotation(xref="paper", yref="paper", x=1, y=1.0, xanchor="right", yanchor="bottom", xshift=-8,
+                           text=f"peak down {frac:.0%} from fresh", showarrow=False, font=pen)
+        fig.add_annotation(x=vx, y=vy, text="", showarrow=True, arrowhead=2, arrowwidth=2,
+                           arrowcolor=T["pen"], ax=-45, ay=30)
+    axis = dict(gridcolor=T["grid2"], minor=dict(showgrid=True, gridcolor=T["grid"]), linecolor=T["rule"], zeroline=False, tickfont=dict(size=14, color=T["muted"]),
+                title_font=dict(size=14, color=T["muted"]), showline=True, mirror=False, automargin=True, title_standoff=14)
+    fig.update_layout(
+        height=340,
+        margin=dict(l=20, r=24, t=44, b=20),
+        paper_bgcolor=T["ground"], plot_bgcolor=T["ground"],
+        font=dict(family="Atkinson Hyperlegible, Segoe UI, sans-serif", color=T["ink"]),
+        xaxis=dict(title="Voltage (V), high to low as on discharge", autorange="reversed", **axis),
+        yaxis=dict(title="dQ/dV (Ah/V)", rangemode="tozero", **axis),
+        showlegend=False,
+        hovermode="x unified",
+        hoverlabel=dict(bgcolor=T["panel"], font=dict(color=T["ink"])),
+    )
+    st.markdown(
+        '<div class="bo-plot"><h2>Incremental capacity curve, dQ/dV</h2>'
+        '<p class="lead">This cell (solid) against a fresh cell (dashed). Peaks shrinking together mean lithium loss; one alone, electrode material loss.</p></div>',
+        unsafe_allow_html=True,
+    )
+    st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False}, theme=None)
 
-    legend=dict(orientation="h", y=1.02, x=1, xanchor="right", yanchor="bottom"),
-    hovermode="x unified",
-)
-st.plotly_chart(fig, use_container_width=True)
-st.caption(
-    "Voltage runs high to low, as on discharge. Peaks that shrink together point to lithium loss; "
-    "a single peak shrinking on its own points to loss of active material on one electrode."
-)
 
 with st.expander("Peak features"):
-    rows = []
-    for p in peaks:
-        rows.append({
-            "Peak": p.upper(),
-            "Position (V)": res.features.get(f"{p}_pos"),
-            "Height (Ah/V)": res.features.get(f"{p}_height"),
-            "Area (Ah)": res.features.get(f"{p}_area"),
-            "FWHM (V)": res.features.get(f"{p}_fwhm"),
-        })
-    st.dataframe(pd.DataFrame(rows).round(4), hide_index=True, use_container_width=True)
-    st.caption(f"Capacity in window: {res.features.get('q_window', float('nan')):.3f} Ah")
+    peaks = sorted({k.split("_")[0] for k in res.features if k.endswith("_pos") and not k.startswith("d_")})
+
+    def cell(x, fmt):
+        return fmt.format(x) if isinstance(x, (int, float)) and np.isfinite(x) else "not found"
+
+    body = "".join(
+        f"<tr><td>{p.upper()}</td><td>{cell(res.features.get(f'{p}_pos'), '{:.3f}')}</td>"
+        f"<td>{cell(res.features.get(f'{p}_height'), '{:.2f}')}</td><td>{cell(res.features.get(f'{p}_area'), '{:.4f}')}</td>"
+        f"<td>{cell(res.features.get(f'{p}_fwhm'), '{:.3f}')}</td></tr>"
+        for p in peaks
+    )
+    q = res.features.get("q_window", float("nan"))
+    st.markdown(
+        '<table class="bo-table"><thead><tr><th>Peak</th><th>Position (V)</th><th>Height (Ah/V)</th>'
+        f'<th>Area (Ah)</th><th>FWHM (V)</th></tr></thead><tbody>{body}</tbody></table>'
+        f'<p class="bo-caption">Capacity in the voltage window: {cell(q, "{:.3f}")} Ah</p>',
+        unsafe_allow_html=True,
+    )

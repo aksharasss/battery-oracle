@@ -1,0 +1,553 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-28T06:16:08+00:00",
+  "title": "Design System: Battery Oracle 2.0",
+  "extensions": {
+    "colorMeta": {
+      "dark-ground": {
+        "role": "neutral",
+        "displayName": "Notebook Ground (dark sheet)",
+        "canonical": "#0d1611",
+        "oklch": "oklch(18.9% 0.017 160)",
+        "tonalRamp": [
+          "#0a0c0a",
+          "#222624",
+          "#3d4440",
+          "#5b645e",
+          "#7a867f",
+          "#9ea8a2",
+          "#c4cbc7",
+          "#ebf0ed"
+        ]
+      },
+      "dark-panel": {
+        "role": "neutral",
+        "displayName": "Margin Column (dark sheet)",
+        "canonical": "#101b14",
+        "oklch": "oklch(20.9% 0.021 156)",
+        "tonalRamp": [
+          "#090c0a",
+          "#222623",
+          "#3d443f",
+          "#5a645d",
+          "#79867d",
+          "#9da8a1",
+          "#c3ccc6",
+          "#eaf0ec"
+        ]
+      },
+      "dark-grid": {
+        "role": "neutral",
+        "displayName": "Minor Grid (dark sheet)",
+        "canonical": "#1b2c22",
+        "oklch": "oklch(27.5% 0.029 158)",
+        "tonalRamp": [
+          "#090c0a",
+          "#202723",
+          "#3a453e",
+          "#56665c",
+          "#74887c",
+          "#9aaa9f",
+          "#c0cdc5",
+          "#e8f1eb"
+        ]
+      },
+      "dark-grid-major": {
+        "role": "neutral",
+        "displayName": "Major Grid (dark sheet)",
+        "canonical": "#2d4a37",
+        "oklch": "oklch(38.0% 0.048 155)",
+        "tonalRamp": [
+          "#070d09",
+          "#1d2821",
+          "#35473b",
+          "#506857",
+          "#6c8b76",
+          "#93ad9b",
+          "#bbcfc1",
+          "#e5f3e9"
+        ]
+      },
+      "dark-select": {
+        "role": "neutral",
+        "displayName": "Selection Wash (dark sheet)",
+        "canonical": "#29473a",
+        "oklch": "oklch(37.0% 0.043 165)",
+        "tonalRamp": [
+          "#070d0a",
+          "#1d2823",
+          "#35473e",
+          "#4f685c",
+          "#6b8b7c",
+          "#92aca0",
+          "#bacfc5",
+          "#e4f2eb"
+        ]
+      },
+      "dark-rule": {
+        "role": "neutral",
+        "displayName": "Rule (dark sheet)",
+        "canonical": "#55705f",
+        "oklch": "oklch(51.9% 0.041 157)",
+        "tonalRamp": [
+          "#080d09",
+          "#1e2821",
+          "#37463c",
+          "#52675a",
+          "#6f8a79",
+          "#95ac9d",
+          "#bdcec3",
+          "#e6f2ea"
+        ]
+      },
+      "dark-fresh": {
+        "role": "neutral",
+        "displayName": "Fresh Reference Graphite (dark sheet)",
+        "canonical": "#8fae9b",
+        "oklch": "oklch(72.2% 0.044 158)",
+        "tonalRamp": [
+          "#080d09",
+          "#1d2822",
+          "#36473c",
+          "#50685a",
+          "#6d8b79",
+          "#94ac9d",
+          "#bccfc3",
+          "#e5f2ea"
+        ]
+      },
+      "dark-muted": {
+        "role": "neutral",
+        "displayName": "Muted Graphite (dark sheet)",
+        "canonical": "#a3bcab",
+        "oklch": "oklch(77.1% 0.036 156)",
+        "tonalRamp": [
+          "#080c0a",
+          "#1f2722",
+          "#38463d",
+          "#54675a",
+          "#728979",
+          "#97ab9d",
+          "#becec3",
+          "#e7f2ea"
+        ]
+      },
+      "dark-ink": {
+        "role": "neutral",
+        "displayName": "Graphite Ink (dark sheet)",
+        "canonical": "#eaf2ec",
+        "oklch": "oklch(95.3% 0.012 154)",
+        "tonalRamp": [
+          "#0a0b0b",
+          "#232624",
+          "#3f4340",
+          "#5d635f",
+          "#7d847f",
+          "#a1a7a2",
+          "#c6cac7",
+          "#ecefed"
+        ]
+      },
+      "dark-pen": {
+        "role": "primary",
+        "displayName": "Red Pen (dark sheet)",
+        "canonical": "#ff7a66",
+        "oklch": "oklch(73.1% 0.166 30)",
+        "tonalRamp": [
+          "#190403",
+          "#42140e",
+          "#6f271d",
+          "#a03c2e",
+          "#d25342",
+          "#ec8372",
+          "#ffb1a2",
+          "#ffded3"
+        ]
+      },
+      "light-ground": {
+        "role": "neutral",
+        "displayName": "Notebook Ground (light sheet)",
+        "canonical": "#f6faf7",
+        "oklch": "oklch(98.1% 0.006 154)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#242524",
+          "#414341",
+          "#5f6260",
+          "#808381",
+          "#a3a6a4",
+          "#c7cac8",
+          "#edefee"
+        ]
+      },
+      "light-panel": {
+        "role": "neutral",
+        "displayName": "Margin Column (light sheet)",
+        "canonical": "#eef5f0",
+        "oklch": "oklch(96.3% 0.010 155)",
+        "tonalRamp": [
+          "#0a0b0b",
+          "#232624",
+          "#3f4340",
+          "#5e635f",
+          "#7e8480",
+          "#a1a6a3",
+          "#c6cac7",
+          "#ecefed"
+        ]
+      },
+      "light-grid": {
+        "role": "neutral",
+        "displayName": "Minor Grid (light sheet)",
+        "canonical": "#d6e8dc",
+        "oklch": "oklch(91.4% 0.025 157)",
+        "tonalRamp": [
+          "#090c0a",
+          "#212723",
+          "#3b453f",
+          "#58655c",
+          "#77877c",
+          "#9ba9a0",
+          "#c2ccc5",
+          "#e9f1ec"
+        ]
+      },
+      "light-grid-major": {
+        "role": "neutral",
+        "displayName": "Major Grid (light sheet)",
+        "canonical": "#afd0ba",
+        "oklch": "oklch(82.7% 0.047 156)",
+        "tonalRamp": [
+          "#070d09",
+          "#1d2821",
+          "#35473b",
+          "#506858",
+          "#6c8b77",
+          "#93ac9b",
+          "#bbcfc2",
+          "#e5f3e9"
+        ]
+      },
+      "light-select": {
+        "role": "neutral",
+        "displayName": "Selection Wash (light sheet)",
+        "canonical": "#cfe5d6",
+        "oklch": "oklch(90.1% 0.031 156)",
+        "tonalRamp": [
+          "#090c0a",
+          "#202722",
+          "#3a453e",
+          "#56665b",
+          "#74887b",
+          "#99aa9f",
+          "#c0cdc4",
+          "#e8f1eb"
+        ]
+      },
+      "light-rule": {
+        "role": "neutral",
+        "displayName": "Rule (light sheet)",
+        "canonical": "#1d2227",
+        "oklch": "oklch(24.9% 0.012 248)",
+        "tonalRamp": [
+          "#0a0b0c",
+          "#232528",
+          "#3f4246",
+          "#5d6267",
+          "#7d8389",
+          "#a0a6ab",
+          "#c6cace",
+          "#eceff2"
+        ]
+      },
+      "light-fresh": {
+        "role": "neutral",
+        "displayName": "Fresh Reference Graphite (light sheet)",
+        "canonical": "#5d6b65",
+        "oklch": "oklch(51.4% 0.019 168)",
+        "tonalRamp": [
+          "#090c0b",
+          "#212624",
+          "#3c4441",
+          "#59645f",
+          "#788680",
+          "#9ca8a3",
+          "#c2ccc8",
+          "#eaf0ed"
+        ]
+      },
+      "light-muted": {
+        "role": "neutral",
+        "displayName": "Muted Graphite (light sheet)",
+        "canonical": "#4b5a54",
+        "oklch": "oklch(45.3% 0.021 169)",
+        "tonalRamp": [
+          "#090c0b",
+          "#212724",
+          "#3b4441",
+          "#58655f",
+          "#778780",
+          "#9ba9a3",
+          "#c2ccc8",
+          "#e9f0ed"
+        ]
+      },
+      "light-ink": {
+        "role": "neutral",
+        "displayName": "Graphite Ink (light sheet)",
+        "canonical": "#1d2227",
+        "oklch": "oklch(24.9% 0.012 248)",
+        "tonalRamp": [
+          "#0a0b0c",
+          "#232528",
+          "#3f4246",
+          "#5d6267",
+          "#7d8389",
+          "#a0a6ab",
+          "#c6cace",
+          "#eceff2"
+        ]
+      },
+      "light-pen": {
+        "role": "primary",
+        "displayName": "Red Pen (light sheet)",
+        "canonical": "#c42a22",
+        "oklch": "oklch(53.6% 0.191 29)",
+        "tonalRamp": [
+          "#1b0302",
+          "#460f0b",
+          "#751f19",
+          "#a83128",
+          "#dd463a",
+          "#f67c6d",
+          "#ffac9e",
+          "#ffdbd0"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Grade Letter",
+        "purpose": "The grade letter only; 6rem under 760px."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Cell or file name heading the result sheet."
+      },
+      "statement": {
+        "displayName": "Statement",
+        "purpose": "One-line second-life use under the grade."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Section heads on the sheet."
+      },
+      "mast": {
+        "displayName": "Masthead",
+        "purpose": "Sidebar masthead; version number in pen."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Facts, mechanism names, empty state."
+      },
+      "body-sm": {
+        "displayName": "Body Small",
+        "purpose": "Lead lines, notes, peak table; captions 0.92rem at 75ch."
+      },
+      "data": {
+        "displayName": "Data",
+        "purpose": "Fact values, percentages, numerals; tabular figures."
+      },
+      "label": {
+        "displayName": "Widget Label",
+        "purpose": "Sidebar form-widget labels, uppercase, muted."
+      },
+      "stamp": {
+        "displayName": "Stamp",
+        "purpose": "Method stamp, uppercase; note tags at 0.72rem."
+      },
+      "hand": {
+        "displayName": "Red-Pen Hand",
+        "purpose": "Handwritten chart annotation only."
+      }
+    },
+    "shadows": [],
+    "motion": [],
+    "breakpoints": [
+      {
+        "name": "stack",
+        "value": "760px",
+        "purpose": "Below this the result columns stack, the column rule turns horizontal, indents drop, grade letter 6rem."
+      }
+    ],
+    "surface": [
+      {
+        "name": "graph-paper",
+        "value": "background-image: linear-gradient(var(--grid2) 1px, transparent 1px), linear-gradient(90deg, var(--grid2) 1px, transparent 1px), linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px",
+        "purpose": "The millimetre sheet behind the whole app."
+      },
+      {
+        "name": "stamp-rotation",
+        "value": "rotate(-3deg)",
+        "purpose": "Method stamp only."
+      },
+      {
+        "name": "focus-ring",
+        "value": "outline: 2px solid var(--pen); outline-offset: 2px",
+        "purpose": "Every focus-visible element."
+      },
+      {
+        "name": "selection",
+        "value": "background: var(--pen); color: var(--ground)",
+        "purpose": "Text selection."
+      },
+      {
+        "name": "container",
+        "value": "max-width: 1240px",
+        "purpose": "Main sheet column."
+      },
+      {
+        "name": "chart",
+        "value": "height 340px; this cell ink 3px solid; fresh 2px dash; pen note Caveat 24px; ticks and titles 14px muted; no legend, no mode bar",
+        "purpose": "dQ/dV Plotly figure styled from the sheet tokens."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Grade Letter",
+      "kind": "custom",
+      "refersTo": "grade-letter",
+      "description": "The grade printed huge in Archivo 900; ink for A and B, pen for C.",
+      "html": "<div class=\"ds-sheet ds-row\"><div class=\"ds-letter\" role=\"img\" aria-label=\"Second-life grade A\">A</div><div class=\"ds-letter ds-letter-c\" role=\"img\" aria-label=\"Second-life grade C\">C</div></div>",
+      "css": ".ds-sheet{--ground:#0d1611;--panel:#101b14;--grid:#1b2c22;--grid2:#2d4a37;--select:#29473a;--rule:#55705f;--muted:#a3bcab;--ink:#eaf2ec;--pen:#ff7a66;--ui:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;padding:1rem;background:var(--ground);font-family:var(--ui);color:var(--ink);} .ds-row{display:flex;gap:2rem;} .ds-letter{font-family:'Archivo','Segoe UI',sans-serif;font-weight:900;font-size:8.5rem;line-height:.82;letter-spacing:-.02em;color:var(--ink);} .ds-letter-c{color:var(--pen);}"
+    },
+    {
+      "name": "Method Stamp",
+      "kind": "chip",
+      "refersTo": "stamp",
+      "description": "Rubber stamp naming the grading path, at the right of the result header.",
+      "html": "<div class=\"ds-sheet\"><span class=\"ds-stamp\">Fast path · 4C model</span></div>",
+      "css": ".ds-sheet{--ground:#0d1611;--panel:#101b14;--grid:#1b2c22;--grid2:#2d4a37;--select:#29473a;--rule:#55705f;--muted:#a3bcab;--ink:#eaf2ec;--pen:#ff7a66;--ui:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;padding:1rem;background:var(--ground);font-family:var(--ui);color:var(--ink);} .ds-stamp{display:inline-block;border:2px solid var(--pen);color:var(--pen);font-weight:700;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;padding:.3rem .6rem;transform:rotate(-3deg);white-space:nowrap;}"
+    },
+    {
+      "name": "Note",
+      "kind": "card",
+      "refersTo": "note",
+      "description": "A caveat stamped on the sheet that stays visible; 1.5px rule border, muted tag.",
+      "html": "<div class=\"ds-sheet\"><div class=\"ds-note\"><b>Caveat</b>Model fitted on Severson 4C discharges; other C-rates shift the peak and are less reliable.</div></div>",
+      "css": ".ds-sheet{--ground:#0d1611;--panel:#101b14;--grid:#1b2c22;--grid2:#2d4a37;--select:#29473a;--rule:#55705f;--muted:#a3bcab;--ink:#eaf2ec;--pen:#ff7a66;--ui:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;padding:1rem;background:var(--ground);font-family:var(--ui);color:var(--ink);} .ds-note{padding:.6rem .85rem;font-size:.95rem;line-height:1.45;} .ds-note b{display:inline-block;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;margin:0 .5rem .15rem 0;padding:0 .35rem;border:1px solid currentColor;} .ds-note{border:1.5px solid var(--rule);} .ds-note b{color:var(--muted);}"
+    },
+    {
+      "name": "Pen Note",
+      "kind": "card",
+      "refersTo": "note-tag-pen",
+      "description": "Warning note: out of range, outside calibration, error, placeholder grader.",
+      "html": "<div class=\"ds-sheet\"><div class=\"ds-note\"><b>Out of range</b>The discharge stops above 2.9 V, so the low-voltage peak was not found.</div></div>",
+      "css": ".ds-sheet{--ground:#0d1611;--panel:#101b14;--grid:#1b2c22;--grid2:#2d4a37;--select:#29473a;--rule:#55705f;--muted:#a3bcab;--ink:#eaf2ec;--pen:#ff7a66;--ui:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;padding:1rem;background:var(--ground);font-family:var(--ui);color:var(--ink);} .ds-note{padding:.6rem .85rem;font-size:.95rem;line-height:1.45;} .ds-note b{display:inline-block;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;margin:0 .5rem .15rem 0;padding:0 .35rem;border:1px solid currentColor;} .ds-note{border:2px solid var(--pen);} .ds-note b{color:var(--pen);}"
+    },
+    {
+      "name": "Mechanism Bar",
+      "kind": "custom",
+      "refersTo": "mechanism-bar-fill-dominant",
+      "description": "Ruled bar on one shared scale with 10% ticks; the dominant mode is pen and underlined.",
+      "html": "<div class=\"ds-sheet\"><div class=\"ds-bar\"><div class=\"ds-r\"><span>Loss of lithium inventory</span><span class=\"ds-val\">4%</span></div><span class=\"ds-track\"><span class=\"ds-fill\" style=\"width:10%\"></span></span></div><div class=\"ds-bar ds-dom\"><div class=\"ds-r\"><span class=\"ds-name\">Loss of active material, cathode (LFP)</span><span class=\"ds-val\">11%</span></div><span class=\"ds-track\"><span class=\"ds-fill\" style=\"width:27.5%\"></span></span></div></div>",
+      "css": ".ds-sheet{--ground:#0d1611;--panel:#101b14;--grid:#1b2c22;--grid2:#2d4a37;--select:#29473a;--rule:#55705f;--muted:#a3bcab;--ink:#eaf2ec;--pen:#ff7a66;--ui:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;padding:1rem;background:var(--ground);font-family:var(--ui);color:var(--ink);} .ds-bar{margin:1.05rem 0;font-size:1.05rem;} .ds-r{display:flex;justify-content:space-between;gap:1rem;margin-bottom:.35rem;} .ds-val{font-weight:700;font-variant-numeric:tabular-nums;} .ds-dom .ds-name{font-weight:700;text-decoration:underline 2px var(--pen);text-underline-offset:5px;} .ds-track{display:block;height:1.25rem;border:1px solid var(--rule);position:relative;background-image:repeating-linear-gradient(90deg,var(--rule) 0 1px,transparent 1px 25%);} .ds-fill{position:absolute;inset:0 auto 0 0;background:var(--ink);} .ds-dom .ds-fill{background:var(--pen);}"
+    },
+    {
+      "name": "Outlined Button",
+      "kind": "button",
+      "refersTo": "button",
+      "description": "Square transparent button with a 1px rule; turns pen on hover (dropzone button).",
+      "html": "<div class=\"ds-sheet\"><button class=\"ds-btn\">Upload</button></div>",
+      "css": ".ds-sheet{--ground:#0d1611;--panel:#101b14;--grid:#1b2c22;--grid2:#2d4a37;--select:#29473a;--rule:#55705f;--muted:#a3bcab;--ink:#eaf2ec;--pen:#ff7a66;--ui:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;padding:1rem;background:var(--ground);font-family:var(--ui);color:var(--ink);} .ds-btn{background:transparent;color:var(--ink);border:1px solid var(--rule);border-radius:0;padding:.5rem 1rem;font:inherit;font-size:1rem;cursor:pointer;} .ds-btn:hover{border-color:var(--pen);color:var(--pen);} .ds-btn:focus-visible{outline:2px solid var(--pen);outline-offset:2px;}"
+    },
+    {
+      "name": "Select",
+      "kind": "input",
+      "refersTo": "select",
+      "description": "Ground-filled square select under an uppercase muted widget label; border turns pen on focus.",
+      "html": "<div class=\"ds-sheet ds-col\"><label class=\"ds-label\" for=\"ds-s\">Or pick a sample</label><select id=\"ds-s\" class=\"ds-select\"><option>Severson cell 0, cycle 311 (4C)</option><option>Wheeler cell 6a, cycle 1500 (C/25)</option></select></div>",
+      "css": ".ds-sheet{--ground:#0d1611;--panel:#101b14;--grid:#1b2c22;--grid2:#2d4a37;--select:#29473a;--rule:#55705f;--muted:#a3bcab;--ink:#eaf2ec;--pen:#ff7a66;--ui:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;padding:1rem;background:var(--ground);font-family:var(--ui);color:var(--ink);} .ds-col{background:var(--panel);display:flex;flex-direction:column;gap:.4rem;max-width:16rem;} .ds-label{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);} .ds-select{background:var(--ground);color:var(--ink);border:1px solid var(--rule);border-radius:0;padding:.55rem .7rem;font:inherit;} .ds-select:focus,.ds-select:focus-visible{outline:none;border-color:var(--pen);}"
+    },
+    {
+      "name": "Sidebar Margin Column",
+      "kind": "nav",
+      "refersTo": "sidebar",
+      "description": "The margin column: tinted panel, 1px right rule, masthead with version in pen, dashed dropzone.",
+      "html": "<aside class=\"ds-side\"><div class=\"ds-mast\">Battery Oracle <span>2.0</span></div><div class=\"ds-drop\">Drop a CSV here</div></aside>",
+      "css": ".ds-side{--ground:#0d1611;--panel:#101b14;--grid:#1b2c22;--grid2:#2d4a37;--select:#29473a;--rule:#55705f;--muted:#a3bcab;--ink:#eaf2ec;--pen:#ff7a66;--ui:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;background:var(--panel);border-right:1px solid var(--rule);padding:1.5rem 1.2rem;font-family:var(--ui);color:var(--ink);max-width:16rem;} .ds-mast{font-weight:700;font-size:1.35rem;padding:.2rem 0 1rem;border-bottom:1px solid var(--rule);margin-bottom:.6rem;} .ds-mast span{color:var(--pen);} .ds-drop{border:1px dashed var(--rule);padding:1rem;color:var(--muted);font-size:.95rem;}"
+    },
+    {
+      "name": "Peak Table",
+      "kind": "custom",
+      "refersTo": "",
+      "description": "Ruled table of peak features; muted bold headers, major-grid row dividers, tabular figures.",
+      "html": "<div class=\"ds-sheet\"><table class=\"ds-table\"><thead><tr><th>Peak</th><th>Position (V)</th><th>Height (Ah/V)</th></tr></thead><tbody><tr><td>P1</td><td>3.143</td><td>3.71</td></tr><tr><td>P2</td><td>3.312</td><td>0.84</td></tr></tbody></table></div>",
+      "css": ".ds-sheet{--ground:#0d1611;--panel:#101b14;--grid:#1b2c22;--grid2:#2d4a37;--select:#29473a;--rule:#55705f;--muted:#a3bcab;--ink:#eaf2ec;--pen:#ff7a66;--ui:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;padding:1rem;background:var(--ground);font-family:var(--ui);color:var(--ink);} .ds-table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:.95rem;} .ds-table th{text-align:left;font-weight:700;color:var(--muted);border-bottom:1px solid var(--rule);padding:.4rem .5rem;} .ds-table td{border-bottom:1px solid var(--grid2);padding:.4rem .5rem;}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Lab Notebook Sheet",
+    "overview": "The whole result is one page of engineering graph paper. A millimetre grid with a heavier line every fifth millimetre covers the app background. The grade, the mechanism split and the dQ/dV curve are written on it in graphite ink, and anything that changed or needs a warning is marked with one red pen. It is not a dashboard of cards. There are no tiles and no shadows, and the only filled shapes are the ink bars. Everything is set apart with one-pixel rules, bordered stamps and the grid itself.\n\nThere are two sheets of the same notebook, and dark comes first. The dark sheet is a green-black ground with near-white graphite. The light sheet is a pale green-white ground with dark graphite. Both use the same red pen, retuned for contrast on each ground. Every color token comes in a dark/light pair with the same role. Switching sheets swaps values, never structure.\n\nHierarchy comes from scale contrast, not decoration. One huge display letter for the grade sits over a single legible UI face at two weights, and a handwritten face appears only where the pen annotates the chart. States and caveats are stamps that stay on the record. They are never toasts, alert boxes or tinted banners.",
+    "keyCharacteristics": [
+      "Millimetre graph-paper ground (10px minor, 50px major) behind everything, visible through every transparent container.",
+      "Three inks per sheet: ground, graphite, red pen. Muted graphite is used for secondary text and rules.",
+      "Square corners everywhere (0px). Rules are 1px. Heavier 2px borders are reserved for pen stamps.",
+      "No shadows, no gradients except the grid itself, no card fills.",
+      "The grade letter is the only display-face text. The chart annotation is the only handwriting."
+    ],
+    "rules": [
+      {
+        "name": "The Three Inks Rule",
+        "body": "A sheet carries ground, graphite and red pen. Muted graphite, rules and grid lines are lighter strokes of the same graphite. No new hue enters a sheet.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Red Pen Rule",
+        "body": "The pen only marks change, warning or annotation. Its only filled areas are the dominant mechanism bar and the grade-C letter. It is never a decorative fill or background.",
+        "section": "colors"
+      },
+      {
+        "name": "The Paired Sheets Rule",
+        "body": "Every color has a dark and a light value with the same role. A new color is not done until both values exist and both pass contrast on their own ground.",
+        "section": "colors"
+      },
+      {
+        "name": "The Three Faces Rule",
+        "body": "Atkinson Hyperlegible sets every piece of UI text. Archivo is only for the grade letter, and Caveat is only for the red-pen note on the chart. Neither may spread to headings, buttons or labels.",
+        "section": "typography"
+      },
+      {
+        "name": "The Scale Contrast Rule",
+        "body": "Rank comes from size, using two weights (400, 700) of one face. Don't use color, boxes or extra weights to rank text.",
+        "section": "typography"
+      },
+      {
+        "name": "The Grid Shows Through Rule",
+        "body": "Containers on the sheet are transparent so the millimetre grid stays continuous behind notes, bars and tables. Only the sidebar, menus and the chart's own paper are filled.",
+        "section": "layout"
+      },
+      {
+        "name": "The Flat Paper Rule",
+        "body": "Nothing floats above the sheet. Don't add `box-shadow`, blur or layered surfaces. If something needs emphasis, give it a heavier rule or the pen.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** put every new surface on the millimetre grid (10px minor, 50px major) and keep its containers transparent so the grid shows through.",
+      "**Do** define every new color as a dark/light pair with the same role.",
+      "**Do** use the red pen only for change, warning, focus and annotation, and pair it with a non-color cue (letter, underline, stamp text).",
+      "**Do** use 1px rules for structure, and 2px pen borders only for stamps and warning notes.",
+      "**Do** set numbers in bold tabular figures.",
+      "**Do** show states and caveats as bordered stamps or notes that stay on the sheet."
+    ],
+    "donts": [
+      "**Don't** round any corner; the radius is 0px.",
+      "**Don't** add shadows, card fills or tinted panels on the sheet. The margin-column tint belongs to the sidebar and menus only.",
+      "**Don't** use Archivo for anything but the grade letter, or Caveat for anything but red-pen chart notes.",
+      "**Don't** introduce a second accent hue or a status palette (green/amber/red). The grade is a letter, and warnings are pen.",
+      "**Don't** convey the grade or the dominant mechanism through color alone."
+    ]
+  }
+}
