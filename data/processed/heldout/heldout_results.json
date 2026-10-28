@@ -1,0 +1,310 @@
+{
+  "frozen": {
+    "models/twin_slow.joblib": true,
+    "oracle/grading.py": true,
+    "oracle/twin.py": true,
+    "oracle/synth.py": true,
+    "oracle/predict.py": true,
+    "git_head": "d2e91a780d9442d8b13d544e8b6de146563a63e0"
+  },
+  "protocol": "docs/heldout_protocol.md",
+  "wheeler_heldout_cells": {
+    "n_checkups": 93,
+    "cells": [
+      "1a",
+      "2a",
+      "3a",
+      "4a",
+      "5b",
+      "6b"
+    ],
+    "routed_to_slow_path": 1.0,
+    "spearman_severity_vs_soh": {
+      "rho": -0.9620560195121638,
+      "p": 4.045957597823635e-53
+    },
+    "spearman_grade_vs_soh": {
+      "rho": -0.8851377215600216,
+      "p": 5.484250029092291e-32
+    },
+    "grade_counts": {
+      "B": 39,
+      "C": 37,
+      "A": 17
+    },
+    "median_soh_by_grade": {
+      "A": 0.929,
+      "B": 0.77,
+      "C": 0.581
+    },
+    "share_pairs_ordered": {
+      "A_above_B": 0.9984917043740573,
+      "B_above_C": 0.9542619542619543,
+      "A_above_C": 1.0
+    },
+    "grade_by_soh_band": {
+      "A": {
+        "SOH<80%": 0,
+        "80-90%": 3,
+        ">90%": 14
+      },
+      "B": {
+        "SOH<80%": 24,
+        "80-90%": 15,
+        ">90%": 0
+      },
+      "C": {
+        "SOH<80%": 37,
+        "80-90%": 0,
+        ">90%": 0
+      }
+    },
+    "grade_improvements_with_age": 1,
+    "grade_steps": 87,
+    "dominant_mode_aged": {
+      "LLI": 86,
+      "LAM_NE": 1
+    },
+    "median_fit_rms": 0.01749949299436039,
+    "final_checkup": [
+      {
+        "cell": "1a",
+        "cycle": 3200,
+        "soh": 0.638,
+        "LLI": 0.358,
+        "LAM_PE": 0.001,
+        "LAM_NE": 0.009,
+        "grade": "B"
+      },
+      {
+        "cell": "2a",
+        "cycle": 3300,
+        "soh": 0.552,
+        "LLI": 0.469,
+        "LAM_PE": 0.034,
+        "LAM_NE": 0.025,
+        "grade": "C"
+      },
+      {
+        "cell": "3a",
+        "cycle": 3900,
+        "soh": 0.538,
+        "LLI": 0.47,
+        "LAM_PE": 0.023,
+        "LAM_NE": 0.008,
+        "grade": "C"
+      },
+      {
+        "cell": "5b",
+        "cycle": 4100,
+        "soh": 0.55,
+        "LLI": 0.457,
+        "LAM_PE": 0.0,
+        "LAM_NE": 0.022,
+        "grade": "C"
+      },
+      {
+        "cell": "4a",
+        "cycle": 4300,
+        "soh": 0.535,
+        "LLI": 0.464,
+        "LAM_PE": 0.073,
+        "LAM_NE": 0.063,
+        "grade": "C"
+      },
+      {
+        "cell": "6b",
+        "cycle": 6800,
+        "soh": 0.485,
+        "LLI": 0.519,
+        "LAM_PE": 0.073,
+        "LAM_NE": 0.062,
+        "grade": "C"
+      }
+    ]
+  },
+  "demo_files": [
+    {
+      "file": "HELDOUT_wheeler_1a_cycle0_C25.csv",
+      "grade_at_freeze": "A",
+      "LLI": 0.0,
+      "LAM_PE": 0.0,
+      "LAM_NE": 0.034
+    },
+    {
+      "file": "HELDOUT_wheeler_1a_cycle1800_C25.csv",
+      "grade_at_freeze": "B",
+      "LLI": 0.232,
+      "LAM_PE": 0.013,
+      "LAM_NE": 0.024
+    },
+    {
+      "file": "HELDOUT_wheeler_1a_cycle3200_C25.csv",
+      "grade_at_freeze": "B",
+      "LLI": 0.358,
+      "LAM_PE": 0.001,
+      "LAM_NE": 0.009
+    },
+    {
+      "file": "HELDOUT_wheeler_2a_cycle0_C25.csv",
+      "grade_at_freeze": "A",
+      "LLI": 0.028,
+      "LAM_PE": 0.003,
+      "LAM_NE": 0.036
+    },
+    {
+      "file": "HELDOUT_wheeler_2a_cycle1800_C25.csv",
+      "grade_at_freeze": "C",
+      "LLI": 0.309,
+      "LAM_PE": 0.025,
+      "LAM_NE": 0.029
+    },
+    {
+      "file": "HELDOUT_wheeler_2a_cycle3300_C25.csv",
+      "grade_at_freeze": "C",
+      "LLI": 0.469,
+      "LAM_PE": 0.034,
+      "LAM_NE": 0.025
+    },
+    {
+      "file": "HELDOUT_wheeler_3a_cycle0_C25.csv",
+      "grade_at_freeze": "A",
+      "LLI": 0.01,
+      "LAM_PE": 0.003,
+      "LAM_NE": 0.033
+    },
+    {
+      "file": "HELDOUT_wheeler_3a_cycle2100_C25.csv",
+      "grade_at_freeze": "B",
+      "LLI": 0.322,
+      "LAM_PE": 0.009,
+      "LAM_NE": 0.019
+    },
+    {
+      "file": "HELDOUT_wheeler_3a_cycle3900_C25.csv",
+      "grade_at_freeze": "C",
+      "LLI": 0.47,
+      "LAM_PE": 0.023,
+      "LAM_NE": 0.008
+    },
+    {
+      "file": "HELDOUT_wheeler_4a_cycle0_C25.csv",
+      "grade_at_freeze": "A",
+      "LLI": 0.0,
+      "LAM_PE": 0.002,
+      "LAM_NE": 0.054
+    },
+    {
+      "file": "HELDOUT_wheeler_4a_cycle2400_C25.csv",
+      "grade_at_freeze": "B",
+      "LLI": 0.286,
+      "LAM_PE": 0.017,
+      "LAM_NE": 0.02
+    },
+    {
+      "file": "HELDOUT_wheeler_4a_cycle4300_C25.csv",
+      "grade_at_freeze": "C",
+      "LLI": 0.464,
+      "LAM_PE": 0.073,
+      "LAM_NE": 0.063
+    }
+  ],
+  "dubarry_files_2_3": {
+    "files": {
+      "file2": {
+        "variables": [
+          "volt_part2"
+        ],
+        "pathinfo": [
+          705688,
+          4
+        ],
+        "volt": [
+          1001,
+          235230
+        ],
+        "label_alignment_r": 0.9999959542294334,
+        "pathinfo_offset": 235230,
+        "pool_lli": 0,
+        "pool_lam_pe": 21549,
+        "pool_lam_ne": 21396,
+        "pool_mixed": 104031
+      },
+      "file3": {
+        "variables": [
+          "volt_part3"
+        ],
+        "pathinfo": [
+          705688,
+          4
+        ],
+        "volt": [
+          1001,
+          235228
+        ],
+        "label_alignment_r": 0.999998051724689,
+        "pathinfo_offset": 470460,
+        "pool_lli": 65987,
+        "pool_lam_pe": 0,
+        "pool_lam_ne": 0,
+        "pool_mixed": 68807
+      }
+    },
+    "fresh_fit_rms": 0.01996485960112134,
+    "n": 73,
+    "r2": {
+      "LLI": -0.2909780097608661,
+      "LAM_PE": 0.08653277449374586,
+      "LAM_NE": -0.6395476947298215
+    },
+    "pearson": {
+      "LLI": 0.5891399226353522,
+      "LAM_PE": 0.5546868838308682,
+      "LAM_NE": -0.11673662538102147
+    },
+    "mae": {
+      "LLI": 0.08554104315191176,
+      "LAM_PE": 0.07277357045057276,
+      "LAM_NE": 0.12802017520539152
+    },
+    "dominant_mode_agreement": 0.3287671232876712,
+    "grade_agreement": 0.5753424657534246,
+    "grade_confusion_true_rows": {
+      "A": {
+        "A": 21,
+        "B": 2,
+        "C": 3
+      },
+      "B": {
+        "A": 3,
+        "B": 1,
+        "C": 10
+      },
+      "C": {
+        "A": 3,
+        "B": 10,
+        "C": 20
+      }
+    },
+    "spearman_severity_vs_true_qloss": 0.9110475196175835,
+    "spearman_total_vs_true_total": 0.7179495090728584,
+    "median_fit_rms": 0.01125273023403415,
+    "by_true_dominant_mode": {
+      "LAM_NE": {
+        "n": 20,
+        "dominant_mode_agreement": 0.0,
+        "grade_agreement": 0.25
+      },
+      "LAM_PE": {
+        "n": 24,
+        "dominant_mode_agreement": 0.2916666666666667,
+        "grade_agreement": 0.6666666666666666
+      },
+      "LLI": {
+        "n": 29,
+        "dominant_mode_agreement": 0.5862068965517241,
+        "grade_agreement": 0.7241379310344828
+      }
+    }
+  }
+}
