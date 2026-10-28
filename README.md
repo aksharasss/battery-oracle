@@ -200,3 +200,21 @@ shows up at the end of life.
   - Both paths set `features["path"]` to `"slow"` or `"fast"`.
 - **Samples:** `data/samples/wheeler_6a_cycle{0,1500,3300}_C25.csv` grade A,
   B (LLI 0.17) and C (LLI 0.40).
+
+## Held-out test (2026-10-28, frozen at 0848e1b)
+
+Protocol: `docs/heldout_protocol.md`; script: `scripts/heldout_test.py`; results:
+`data/processed/heldout/`. Grade rule and models unchanged since the freeze.
+
+- **Unseen Wheeler cells (1a 2a 3a 4a 5b 6b, 93 C/25 checkups, app path).** Severity vs SOH
+  Spearman −0.96, grade vs SOH −0.89. Median SOH A 0.93 / B 0.77 / C 0.58; pairs ordered by
+  SOH: A>B 99.8%, B>C 95%. No C above 80% SOH; 1 of 87 steps improved with age. Limits: same
+  cell make and ageing protocol as the tuning cells; B spans a wide SOH range; LLI dominates
+  almost everywhere, so this tests the grade more than the mechanism split.
+- **Unseen Dubarry curves (files 2 and 3, 73 labelled).** Severity vs true capacity loss
+  Spearman 0.91, but dominant mode correct only 33% (0/20 when the true mode is LAM_NE),
+  grade agreement 58%, per-mode R² ≤ 0.09. The mechanism split does not hold up here. Caveat:
+  Dubarry curves are C/25 charge curves treated as discharges.
+- 25 °C files of the tuning cells: not run (a file with comma decimals broke the loader).
+- Demo uploads: `data/samples/heldout/HELDOUT_wheeler_*` are fair held-out. The older
+  `data/samples/wheeler_6a_*` and `app/samples/*` are not (tuning cell / synthetic).
