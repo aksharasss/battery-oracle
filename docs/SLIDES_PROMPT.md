@@ -86,14 +86,13 @@ Say: The rule was approved by the team on 2026-10-27, after seeing Wheeler resul
 Say: Grades follow measured health without ever seeing capacity.
 
 ### Slide 12: Independent check and held-out test
-- Dubarry set (72 curves): LAM_PE tracked well (Pearson 0.95, R2 0.78). LAM_NE not seen (estimated mean 0.02 vs true 0.19). LLI near zero in that sample, not scored.
-- Held-out test, rule and models frozen at commit 0848e1b before looking at results (7 never-used Wheeler cells, 2 new Dubarry files):
-  - Spearman severity vs SOH: [[PLACEHOLDER]]
-  - Spearman grade vs SOH: [[PLACEHOLDER]]
-  - Grades improving with age: [[PLACEHOLDER]]
-  - Median SOH per grade A / B / C: [[PLACEHOLDER]]
-  - Dubarry LAM_PE R2 / mechanism MAE / dominant-mode agreement: [[PLACEHOLDER]]
-  - Report failures too: [[PLACEHOLDER: anything that did not work]]
+- Earlier Dubarry check (72 curves): LAM_PE tracked well (Pearson 0.95, R2 0.78). LAM_NE not seen (estimated mean 0.02 vs true 0.19). LLI near zero in that sample, not scored.
+- Held-out test, rule and models frozen at commit 0848e1b before looking at results:
+  - 6 unseen Wheeler cells (1a 2a 3a 4a 5b 6b), 93 C/25 checkups: severity vs SOH Spearman -0.96; grade vs SOH -0.89.
+  - Median SOH: A 0.93, B 0.77, C 0.58. Pairs ordered by SOH: A>B 99.8%, B>C 95%.
+  - No C above 80% SOH; 1 of 87 steps improved with age.
+  - Unseen Dubarry curves (73 labelled): severity vs true capacity loss Spearman 0.91, BUT dominant mode correct only 33% (0 of 20 when the true mode is LAM_NE), grade agreement 58%, per-mode R2 at most 0.09. The mechanism split does not hold up here.
+  - Limits: same cell make and protocol as tuning cells; grade B spans a wide SOH range; LLI dominates almost everywhere, so this tests the grade more than the mechanism split; 25 degC check was not run (loader broke on a comma-decimal file).
 Say: This is the fairest test we have; we report it as it came out.
 
 ### Slide 13: The app (live demo)
@@ -101,7 +100,7 @@ Figure: Streamlit screenshot [[PLACEHOLDER: screenshot]].
 - Upload a partial discharge CSV (voltage + capacity, or current + time).
 - Output: grade, confidence, LLI / LAM_PE / LAM_NE breakdown, dQ/dV plot against a fresh reference, warnings.
 - Two paths chosen automatically: slow twin fit for C/25-like files (15 to 50 s), fast 4C feature model (under 1 s).
-- Demo files: [[PLACEHOLDER: list of demo files from the held-out thread, marked fair / not fair]]
+- Demo files: fair held-out = data/samples/heldout/HELDOUT_wheeler_*. NOT fair (tuning cell or synthetic) = data/samples/wheeler_6a_* and app/samples/*.
 Say: Run `streamlit run app/streamlit_app.py`.
 
 ### Slide 14: Honest limitations (must appear in full)

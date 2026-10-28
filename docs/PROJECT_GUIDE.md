@@ -63,15 +63,19 @@ In the app, upload a CSV (voltage + capacity, or current + time), or use files i
 - Wheeler (7 cells, 103 checkups, no refit): fit rms 0.011; severity vs capacity Spearman -0.84; total loss vs SOH -0.87; 0% of steps improve in grade with age; LLI dominant at end in 6 of 7 cells; grades A 7, B 11, C 85.
 - Dubarry: LAM_PE Pearson 0.95 (R2 0.78); LAM_NE not detected; LLI not scorable in that sample.
 - Severson 4C forest model: cross-validated R2 0.62 / 0.70 / 0.54; synthetic hold-out grade agreement was 82% in the earlier version (before recalibration). 4C mechanism split is indicative only.
-- Held-out test (rule frozen at commit 0848e1b): see `docs/heldout_protocol.md` on branch `claude/project-thread-wc6dvm`. Results: [[PLACEHOLDER: fill from the held-out thread]].
+- Held-out test (rule and models frozen at commit 0848e1b, protocol in `docs/heldout_protocol.md`):
+  - 6 unseen Wheeler cells, 93 checkups: severity vs SOH Spearman -0.96, grade vs SOH -0.89; median SOH A 0.93, B 0.77, C 0.58; no C above 80% SOH; 1 of 87 steps improved with age.
+  - Unseen Dubarry (73 curves): severity Spearman 0.91, but dominant mode right only 33% (0 of 20 for LAM_NE), grade agreement 58%, per-mode R2 at most 0.09. The mechanism split does not hold up there.
+  - Limits: B spans a wide SOH range; same cell make as tuning; 25 degC check not run.
 
 ## 12. Honest limitations
 1. Grade rule was tuned on Wheeler after seeing it; held-out test is the fair check.
 2. Dubarry curves are charge curves fitted as discharge.
 3. LAM_NE is a lower bound (seen only when graphite becomes limiting).
 4. LLI and LAM_PE trade off mid-life; their sum is well determined, the split is not (not fixed even with charge curves on synthetic data).
-5. One chemistry, small sample (7 tuning cells).
-6. Grades are not safety-validated; no teardown ground truth.
+5. Mechanism split is weak on unseen Dubarry data (see section 11).
+6. One chemistry, small sample (7 tuning cells).
+7. Grades are not safety-validated; no teardown ground truth.
 
 ## 13. Novelty
 All parts are standard (ICA, half-cell twin, ML on synthetic curves, ICA clustering). Closest prior work: Beatty et al. 2026 (Batteries 12:55), which clusters IC features including Severson but has no LLI/LAM split and no cross-dataset test. Our claim, "to our knowledge": grading by fitted mechanism, plus a no-refit test on another dataset, plus an upload tool.
