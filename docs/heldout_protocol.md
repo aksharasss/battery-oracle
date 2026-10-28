@@ -21,3 +21,9 @@ Changes made later are reported separately as post-freeze.
 **Reported as they come out, including failures:** Spearman of severity and of grade vs
 measured SOH; median SOH per grade and share of A>B>C pairs ordered by SOH; grade
 improvements with age; dominant mode; Dubarry R2 / MAE / dominant-mode and grade agreement.
+
+**Harness fixes after the first run (no change to the graded code or models):** the hash
+check compared CRLF files after stripping CR on one side only, so it falsely flagged
+`twin.py`, `synth.py` and `predict.py`; and Dubarry files 2 and 3 hold only the voltage
+matrix, so `Qnorm`/`pathinfo` are now read from file 1. `git diff 0848e1b -- oracle models`
+is empty.

@@ -37,12 +37,12 @@ from oracle.mechanisms import MECHANISMS
 from oracle.schema import DischargeCurve
 
 TUNING_CELLS = {"1b", "2b", "3b", "4b", "5a", "6a", "7a"}
-FROZEN = {   # sha256 at the freeze (docs/heldout_protocol.md)
+FROZEN = {   # sha256 at the freeze, .py files with CRLF -> LF (docs/heldout_protocol.md)
     "models/twin_slow.joblib": "ac5dc761876b38f9052ed42de7a27f6faa3ff4fe0fd8885cf04b7e2a2dc16857",
     "oracle/grading.py": "3ddaea1e385f9777b37d0a0c5f6d5c4f1ec99b825bdb7536be840f21a220d855",
-    "oracle/twin.py": "cf2b7d2d7b1c7e84d8aeb9381914b0c5e6f2e0da9d657f0af58383eee8ae57a5",
-    "oracle/synth.py": "f911165beee5059a2fddf042bf4b08465035fbca10e2688769b21e93e743e0f8",
-    "oracle/predict.py": "4a1e1fda2c35dbd48cb996cd432784223ae165ad8345781bb0ed2b55ff7a6197",
+    "oracle/twin.py": "cafe02ac6b2b60a67eae8054a7d7c4a3c0c9d4030a3b39ae391e6164498e7ab6",
+    "oracle/synth.py": "ea2f87cdc9060e821fa6aca711bcc98646e861aab8cfa81112dca6ab21d1378a",
+    "oracle/predict.py": "9aeb4ece7247def40e05446f92b1f28dbd91130ca28b742f6ff4c11c1ad0b94e",
 }
 RANK = {"A": 0, "B": 1, "C": 2}
 DUBARRY_AH = 1.1
@@ -52,7 +52,7 @@ def frozen_check() -> dict:
     out = {}
     for rel, want in FROZEN.items():
         p = ROOT / rel
-        # git may check text files out with CRLF on Windows; hash with LF
+        # some files are committed with CRLF, and checkouts may convert; hash with LF
         b = p.read_bytes()
         if rel.endswith(".py"):
             b = b.replace(b"\r\n", b"\n")
@@ -177,14 +177,16 @@ def dubarry_items(root: Path, n_per_mode: int, seed: int, report: dict):
 
     rng = np.random.default_rng(seed)
     items = []
+    # Qnorm and pathinfo (all paths) are stored in file 1 only
+    m1 = sio.loadmat(root / "Gr-LFP_5000paths_1.mat", variable_names=["Qnorm", "pathinfo"])
+    q, P_all = m1["Qnorm"].ravel(), m1["pathinfo"]
     prev_n = [next(sh[1] for nm, sh, _ in sio.whosmat(root / "Gr-LFP_5000paths_1.mat")
                    if nm.startswith("volt"))]
     for i in (2, 3):
         path = root / f"Gr-LFP_5000paths_{i}.mat"
         names = [n for n, *_ in sio.whosmat(path)]
         vname = next(n for n in names if n.startswith("volt"))
-        m = sio.loadmat(path, variable_names=["Qnorm", "pathinfo", vname])
-        q, P_all, V = m["Qnorm"].ravel(), m["pathinfo"], m[vname]
+        V = sio.loadmat(path, variable_names=[vname])[vname]
         n = V.shape[1]
         report[f"file{i}"] = {"variables": names, "pathinfo": list(P_all.shape), "volt": list(V.shape)}
         # Label/curve alignment check: the capacity loss in pathinfo must match
@@ -279,7 +281,9 @@ def main():
     args = ap.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
 
-    res = {"frozen": frozen_check(), "protocol": "docs/heldout_protocol.md"}
+    res_path = args.out / "heldout_results.json"
+    res = json.loads(res_path.read_text()) if res_path.exists() else {}
+    res.update({"frozen": frozen_check(), "protocol": "docs/heldout_protocol.md"})
     print(json.dumps(res["frozen"]), flush=True)
     if not all(v for k, v in res["frozen"].items() if k != "git_head"):
         print("WARNING: frozen files differ from the freeze; results are NOT the frozen test", flush=True)
